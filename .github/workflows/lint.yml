@@ -27,6 +27,9 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.4
       - name: Install dependencies
         run: |        
           pip install -r tools/REQUIREMENTS.txt
@@ -36,3 +39,5 @@ jobs:
       - name: run documentation checks
         run: |
           python tools/check_documentation.py cloud-operations data-solutions data-solutions/data-platform-foundations factories factories/firewall-vpc-rules foundations modules networking
+      - name: Terraform fmt
+        run: terraform fmt -recursive -check .
