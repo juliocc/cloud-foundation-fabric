@@ -22,6 +22,8 @@ on:
 jobs:
   test-modules:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_CREDENTIALS: $GITHUB_WORKSPACE/.github/workflows/dummy-key.json
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -33,6 +35,6 @@ jobs:
       - name: Install dependencies
         run: |        
           pip install -r tests/requirements.txt
-      - name: run boilerplate checks
+      - name: run tests
         run: |
           pytest -vv -x tests/modules
