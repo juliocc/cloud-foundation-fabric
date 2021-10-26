@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-     
-   # xxcc
 
 output "id" {
   description = "An identifier for the resource with format projects/{{project}}/instances/{{name}}."
@@ -44,5 +42,4 @@ output "tables" {
   value       = google_bigtable_table.default
 }
 
-
-
+# xxx
