@@ -32,7 +32,7 @@ jobs:
           pip install -r tools/REQUIREMENTS.txt
       - name: run boilerplate checks
         run: |
-          python tools/check_boilerplate.py
+          python tools/check_boilerplate.py .
       - name: run documentation checks
         run: |
           python tools/check_documentation.py cloud-operations data-solutions data-solutions/data-platform-foundations factories factories/firewall-vpc-rules foundations modules networking
