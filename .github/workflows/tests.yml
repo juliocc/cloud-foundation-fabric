@@ -22,8 +22,6 @@ on:
 jobs:
   test-modules:
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_CREDENTIALS: ${{ env.GITHUB_WORKSPACE }}/.github/workflows/dummy-key.json
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -35,6 +33,8 @@ jobs:
       - name: Install dependencies
         run: |        
           pip install -r tests/requirements.txt
+      - name: Set env
+        run: echo "GOOGLE_CREDENTIALS=${GITHUB_WORKSPACE#*\/}/.github/workflows/dummy-key.json" >> $GITHUB_ENV          
       - name: run tests
         run: |
           pytest -vv -x tests/modules
