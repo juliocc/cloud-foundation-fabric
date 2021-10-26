@@ -35,4 +35,4 @@ jobs:
           pip install -r tests/requirements.txt
       - name: run boilerplate checks
         run: |
-          pytest -vv tests/modules
+          pytest -vv -x tests/modules
