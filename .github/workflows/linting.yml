@@ -24,51 +24,44 @@ on:
       - lint
 
 jobs:
-  linting:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  boilerplate:
+    name: Boilerplate check
+    uses: ./.github/workflows/run-tool.yaml
+    with:
+      run: |
+        python3 tools/check_boilerplate.py $GITHUB_WORKSPACE
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
+  terraform-fmt:
+    name: Terraform linting check
+    uses: ./.github/workflows/run-tool.yaml
+    with:
+      run: |
+        terraform fmt -recursive -check -diff $GITHUB_WORKSPACE
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.9
+  documentation-fabric:
+    name: Check documentation (fabric)
+    uses: ./.github/workflows/run-tool.yaml
+    with:
+      run: |
+        python3 tools/check_documentation.py examples modules fast
 
-      - name: Install dependencies
-        run: |
-          pip install -r tools/requirements.txt
+  documentation-links-fabric:
+    name: Check documentation links (fabric)
+    uses: ./.github/workflows/run-tool.yaml
+    with:
+      run: |
+        python3 tools/check_links.py .
 
-      - name: Boilerplate
-        id: boilerplate
-        run: |
-          python3 tools/check_boilerplate.py $GITHUB_WORKSPACE
+  name-length-fast:
+    name: Check documentation links (fabric)
+    uses: ./.github/workflows/run-tool.yaml
+    with:
+      run: |
+        python3 tools/check_names.py --prefix-length=10 fast/stages
 
-      - name: Terraform Linting Check
-        id: fmt
-        run: |
-          terraform fmt -recursive -check -diff $GITHUB_WORKSPACE
-
-      - name: Check documentation (fabric)
-        id: documentation-fabric
-        run: |
-          python3 tools/check_documentation.py examples modules fast
-
-      - name: Check documentation links (fabric)
-        id: documentation-links-fabric
-        run: |
-          python3 tools/check_links.py .
-
-      - name: Check name length (fast)
-        id: name-length-fast
-        run: |
-          python3 tools/check_names.py --prefix-length=10 fast/stages
-
-      - name: Check python formatting
-        id: yapf
-        run: |
-          yapf --style="{based_on_style: google, indent_width: 2, SPLIT_BEFORE_NAMED_ASSIGNS: false}" -p -d tools/*.py
+  yapf:
+    name: Check python formatting
+    uses: ./.github/workflows/run-tool.yaml
+    with:
+      run: |
+        yapf --style="{based_on_style: google, indent_width: 2, SPLIT_BEFORE_NAMED_ASSIGNS: false}" -p -d tools/*.py
