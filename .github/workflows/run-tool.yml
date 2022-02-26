@@ -15,9 +15,10 @@
 name: "Tool Runner"
 on:
   workflow_call:
-    run:
-      required: true
-      type: string
+    inputs:
+      run:
+        required: true
+        type: string
 
 
 env:

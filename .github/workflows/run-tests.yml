@@ -15,9 +15,10 @@
 name: "Test Runner"
 on:
   workflow_call:
-    test_dirs:
-      required: true
-      type: string
+    inputs:
+      test_dirs:
+        required: true
+        type: string
 
 env:
   TF_PLUGIN_CACHE_DIR: "/home/runner/.terraform.d/plugin-cache"
