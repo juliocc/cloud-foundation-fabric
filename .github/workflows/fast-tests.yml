@@ -29,7 +29,7 @@ on:
 
 jobs:
   fast-tests:
-    uses: ./.github/workflows/run-fabric-tests.yml
+    uses: ./.github/workflows/run-tests.yml
     with:
       test_dirs: tests/fast
 

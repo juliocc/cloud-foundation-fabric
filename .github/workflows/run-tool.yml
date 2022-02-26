@@ -49,7 +49,7 @@ jobs:
       - name: Setup environment
         run: |
           mkdir -p ${{ env.TF_PLUGIN_CACHE_DIR }}
-          pip install -r tests/requirements.txt
+          pip install -r tools/requirements.txt
 
       - name: Run tool
         run: ${{inputs.run}}

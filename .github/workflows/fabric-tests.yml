@@ -27,16 +27,16 @@ on:
 
 jobs:
   doc-examples:
-    uses: ./.github/workflows/run-fabric-tests.yml
+    uses: ./.github/workflows/run-tests.yml
     with:
       test_dirs: tests/doc_examples
 
   examples:
-    uses: ./.github/workflows/run-fabric-tests.yml
+    uses: ./.github/workflows/run-tests.yml
     with:
       test_dirs: tests/examples
 
   modules:
-    uses: ./.github/workflows/run-fabric-tests.yml
+    uses: ./.github/workflows/run-tests.yml
     with:
       test_dirs: tests/modules
