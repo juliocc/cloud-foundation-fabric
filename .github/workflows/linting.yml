@@ -26,42 +26,42 @@ on:
 jobs:
   boilerplate:
     name: Boilerplate check
-    uses: ./.github/workflows/run-tool.yaml
+    uses: ./.github/workflows/run-tool.yml
     with:
       run: |
         python3 tools/check_boilerplate.py $GITHUB_WORKSPACE
 
   terraform-fmt:
     name: Terraform linting check
-    uses: ./.github/workflows/run-tool.yaml
+    uses: ./.github/workflows/run-tool.yml
     with:
       run: |
         terraform fmt -recursive -check -diff $GITHUB_WORKSPACE
 
   documentation-fabric:
     name: Check documentation (fabric)
-    uses: ./.github/workflows/run-tool.yaml
+    uses: ./.github/workflows/run-tool.yml
     with:
       run: |
         python3 tools/check_documentation.py examples modules fast
 
   documentation-links-fabric:
     name: Check documentation links (fabric)
-    uses: ./.github/workflows/run-tool.yaml
+    uses: ./.github/workflows/run-tool.yml
     with:
       run: |
         python3 tools/check_links.py .
 
   name-length-fast:
     name: Check documentation links (fabric)
-    uses: ./.github/workflows/run-tool.yaml
+    uses: ./.github/workflows/run-tool.yml
     with:
       run: |
         python3 tools/check_names.py --prefix-length=10 fast/stages
 
   yapf:
     name: Check python formatting
-    uses: ./.github/workflows/run-tool.yaml
+    uses: ./.github/workflows/run-tool.yml
     with:
       run: |
         yapf --style="{based_on_style: google, indent_width: 2, SPLIT_BEFORE_NAMED_ASSIGNS: false}" -p -d tools/*.py
