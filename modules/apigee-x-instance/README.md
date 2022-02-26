@@ -4,6 +4,8 @@ This module allows managing a single Apigee X instance and its environment attac
 
 ## Examples
 
+## Examples
+
 ### Apigee X Evaluation Instance
 
 ```hcl
