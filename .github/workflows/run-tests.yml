@@ -50,4 +50,4 @@ jobs:
         run: |
           mkdir -p ${{ env.TF_PLUGIN_CACHE_DIR }}
           pip install -r tests/requirements.txt
-          pytest -vv ${{inputs.test_dirs}}
+          pytest -vvx ${{inputs.test_dirs}}
