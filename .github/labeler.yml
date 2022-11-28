@@ -1,7 +1,6 @@
-
 'on:blueprints':
   - any:
-    - 'blueprints/**/*'
+    - 'blueprints/**'
     - '!**/*.md'
 
 'on:documentation':
@@ -19,14 +18,14 @@
 
 'on:FAST':
   - any:
-    - 'fast/**/*'
+    - 'fast/**'
     - '!**/*.md'
 
 'on:modules':
   - any:
-    - 'modules/**/*'
+    - 'modules/**'
     - '!**/*.md'
 
 'on:tools':
-  - 'tools/**/*'
-  - '.github/**/*'
+  - 'tools/**'
+  - '.github/**'
