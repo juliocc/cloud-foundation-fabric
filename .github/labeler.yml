@@ -13,21 +13,25 @@
 # limitations under the License.
 
 'on:blueprints':
-  - 'blueprints/**/*.tf'
+  - 'blueprints/**/*'
 
 'on:documentation':
-  # all md files
+
   - any:
       - '**/*.md'
-      - '!blueprints/**/*.md'
-      - '!modules/**/*.md'
-      - '!fast/stages/**/*.md'
+      - '!**/README.md'
+
+  - 'README.md'
+  - 'blueprints/README.md'
+  - 'modules/README.md'
+  - 'fast/README.md'
+  - 'fast/stages/README.md'
 
 'on:FAST':
-  - 'fast/**/*.tf'
+  - 'fast/**/*'
 
 'on:modules':
-  - 'modules/**/*.tf'
+  - 'modules/**/*'
 
 'on:tools':
   - 'tools/**/*'
