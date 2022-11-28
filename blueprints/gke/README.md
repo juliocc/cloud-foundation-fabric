@@ -30,3 +30,5 @@ They are meant to be used as minimal but complete starting points to create actu
 It is meant to be used as a starting point for most Shared VPC configurations, and to be integrated to the above blueprints where Shared VPC is needed in more complex network topologies.
 
 <br clear="left">
+
+#x
