@@ -271,3 +271,4 @@ resource "local_file" "rbac_file" {
   filename        = "${path.module}/tenant-setup.yaml"
   file_permission = "0666"
 }
+#jj
