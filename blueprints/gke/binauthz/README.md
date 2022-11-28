@@ -4,6 +4,8 @@ The following blueprint shows to how to create a CI and a CD pipeline in Cloud B
 
 The diagram below depicts the architecture used in the blueprint.
 
+ddd
+
 ![Architecture](diagram.png)
 
 The CI and CD pipelines are implemented as Cloud Build triggers that run with a user-specified service account. 
