@@ -2,7 +2,7 @@
 
 This module simplifies the creation of repositories using Google Cloud Artifact Registry.
 
-Note: Artifact Registry is still in beta, hence this module currently uses the beta provider.
+Note: Artddifact Registry is still in beta, hence this module currently uses the beta provider.
 
 ## Example
 
