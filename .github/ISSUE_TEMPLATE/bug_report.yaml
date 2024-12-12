@@ -5,8 +5,8 @@ body:
     attributes:
       value:
         Thanks for submitting a bug! This issue tracker is for 
-        [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules).
-        Please search the issue tracker to see if there is an existing issue for the feature you are requesting.
+        [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric).
+        Please search the issue tracker to see if there is an existing issue for the bug you are reporting.
 
         
         For general questions or discussions, please use the 
@@ -59,7 +59,7 @@ body:
     attributes:
       label: Steps to reproduce
       description:
-        Provice the steps to reproduce the behavior
+        Provide the steps to reproduce the behavior. Please include any relevant terraform code.
     validations:
       required: true
 
@@ -87,7 +87,7 @@ body:
     attributes:
       label: Additional context
       description:
-        Please include any other context, like screenshots, if
-        applicable.
+         To help us understand the issue, please include any relevant screenshots, 
+         Terraform plan/apply output, etc.
       
 
