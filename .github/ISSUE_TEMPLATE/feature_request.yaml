@@ -7,7 +7,7 @@ body:
     attributes:
       value: >
         Thanks for submitting a feature request! This issue tracker is for 
-        [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules).
+        [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric).
         Please search the issue tracker to see if there is an existing issue for the feature you are requesting.
 
         
