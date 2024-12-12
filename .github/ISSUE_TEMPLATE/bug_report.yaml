@@ -12,7 +12,7 @@ body:
         For general questions or discussions, please use the 
         [Discussions](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/discussions) tab
         
-  - type: dropdown
+  - type: checkboxes
     id: affected-components
     attributes:
       label: Affected components
