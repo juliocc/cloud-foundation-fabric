@@ -11,7 +11,7 @@ body:
         Please search the issue tracker to see if there is an existing issue for the feature you are requesting.
 
         
-        For general questions or discussion, please use the 
+        For general questions or discussions, please use the 
         [Discussions](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/discussions) tab
   - type: textarea
     id: the-feature-request
