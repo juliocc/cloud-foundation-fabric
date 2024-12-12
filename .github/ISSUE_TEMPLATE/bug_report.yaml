@@ -16,7 +16,6 @@ body:
     id: affected-components
     attributes:
       label: Affected components
-      description: What is this bug about?
       options:
         - label: Fabric modules
         - label: FAST
