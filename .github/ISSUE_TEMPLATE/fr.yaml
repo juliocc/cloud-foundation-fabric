@@ -5,7 +5,7 @@ labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
-      value: |
+      value: >
         Thanks for submitting a feature request! This issue tracker is for 
         [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules).
         Please search the issue tracker to see if there is an existing issue for the feature you are requesting.
@@ -24,7 +24,7 @@ body:
     id: proposed-solution
     attributes:
       label: Proposed solution
-      description: Share how this will benefit GitHub Desktop and its users.
+      description: Share how this will benefit Fabric and its users.
     validations:
       required: true
   - type: textarea
