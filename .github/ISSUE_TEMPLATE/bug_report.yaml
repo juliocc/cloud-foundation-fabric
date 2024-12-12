@@ -18,10 +18,10 @@ body:
       label: Affected components
       description: What is this bug about?
       options:
-        - Fabric modules
-        - FAST
-        - Blueprints
-        - Other
+        Fabric modules: anything under the `modules` folder
+        FAST: anything under the `fast` folder
+        Blueprints: anything under the `blueprints` folder
+        Other: something else
     validations:
       required: true
 
