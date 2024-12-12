@@ -9,7 +9,7 @@ body:
         Thanks for submitting a feature request! This issue tracker is for 
         [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules).
         Please search the issue tracker to see if there is an existing issue for the feature you are requesting.
-
+        <br>
         For general questions or discussion, please use the 
         [Discussions](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/discussions) tab
   - type: textarea
