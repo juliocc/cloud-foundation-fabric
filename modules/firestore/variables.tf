@@ -14,30 +14,6 @@
  * limitations under the License.
  */
 
-variable "backup_schedule" {
-  description = "Backup schedule."
-  type = object({
-    retention         = string
-    daily_recurrence  = optional(bool, false)
-    weekly_recurrence = optional(string)
-  })
-  default = null
-
-  validation {
-    condition = (var.backup_schedule == null ? true :
-    can(regex("\\d+s", var.backup_schedule.retention)))
-    error_message = "Retention must be specified in the following format: \\d+s."
-  }
-  validation {
-    condition = (var.backup_schedule == null ? true :
-      (var.backup_schedule.daily_recurrence
-      && var.backup_schedule.weekly_recurrence == null) ||
-      (!var.backup_schedule.daily_recurrence
-    && var.backup_schedule.weekly_recurrence != null))
-    error_message = "Either daily_recurrence or weekly_recurrence must be specified, but not both."
-  }
-}
-
 variable "database" {
   description = "Database attributes."
   type = object({
@@ -91,6 +67,32 @@ variable "database" {
   }
 
 }
+
+
+variable "backup_schedule" {
+  description = "Backup schedule."
+  type = object({
+    retention         = string
+    daily_recurrence  = optional(bool, false)
+    weekly_recurrence = optional(string)
+  })
+  default = null
+
+  validation {
+    condition = (var.backup_schedule == null ? true :
+    can(regex("\\d+s", var.backup_schedule.retention)))
+    error_message = "Retention must be specified in the following format: \\d+s."
+  }
+  validation {
+    condition = (var.backup_schedule == null ? true :
+      (var.backup_schedule.daily_recurrence
+      && var.backup_schedule.weekly_recurrence == null) ||
+      (!var.backup_schedule.daily_recurrence
+    && var.backup_schedule.weekly_recurrence != null))
+    error_message = "Either daily_recurrence or weekly_recurrence must be specified, but not both."
+  }
+}
+
 
 variable "database_create" {
   description = "Flag indicating whether the database should be created of not."
