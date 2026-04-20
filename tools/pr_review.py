@@ -231,6 +231,7 @@ Review Process:
 
 Review the provided git diff, taking into account the history of the PR (previous reviews and changes) if provided. Provide a concise, constructive review.
 - Highlight any violations of the guidelines (e.g., naming conventions, missing context support, incorrect IAM patterns, missing tests).
+- Focus your review on the changes introduced in this PR. If you notice pre-existing issues in the surrounding code that was not modified by this PR, you may mention them as optional suggestions, but clearly state that they are pre-existing and not a requirement for this PR.
 - Suggest specific code improvements.
 - Verify if previous feedback has been addressed.
 - You CANNOT approve the PR. If the code looks good and follows all guidelines (or if the user has successfully applied requested changes), simply acknowledge that this follows the best practices and state that a maintainer will do the final review before approval.
