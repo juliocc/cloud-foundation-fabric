@@ -154,12 +154,11 @@ def get_history(comments_file, base_sha, head_sha):
 
 
 try:
-  import vertexai
-  from vertexai.generative_models import GenerativeModel
+  from google import genai
+  from google.genai import types
 except ImportError:
-  print("Error: google-cloud-aiplatform is not installed.", file=sys.stderr)
-  print("Please install it via: pip install google-cloud-aiplatform",
-        file=sys.stderr)
+  print("Error: google-genai is not installed.", file=sys.stderr)
+  print("Please install it via: pip install google-genai", file=sys.stderr)
   sys.exit(1)
 
 
@@ -209,9 +208,11 @@ def main():
 
   # Initialize Vertex AI
   try:
-    vertexai.init(project=args.project, location=args.location)
+    client = genai.Client(
+        vertexai=True, project=args.project, location=args.location
+    )
   except Exception as e:
-    print(f"Error initializing Vertex AI: {e}", file=sys.stderr)
+    print(f"Error initializing GenAI Client: {e}", file=sys.stderr)
     sys.exit(1)
 
   # Construct the System Instruction
@@ -220,34 +221,45 @@ def main():
 Your task is to review a Pull Request diff for the Cloud Foundation Fabric repository.
 Today's date is {today_date}.
 
-You MUST strictly enforce the repository's architecture, conventions, and style guidelines.
-Here are the repository guidelines you must follow:
+You MUST strictly enforce the repository's architecture, conventions, and style guidelines provided below.
+Repository Guidelines:
 {guidelines}
 
-Review the provided git diff. Provide a concise, constructive review.
+Review Process:
+1. **Analyze History**: You will be provided with the history of the PR (previous automated reviews and changes applied). Use this to verify if previous feedback has been addressed. Acknowledge resolved items and point out if any were ignored or incorrectly implemented.
+2. **Review Current Diff**: Review the current cumulative diff against the guidelines.
+
+Review the provided git diff, taking into account the history of the PR (previous reviews and changes) if provided. Provide a concise, constructive review.
 - Highlight any violations of the guidelines (e.g., naming conventions, missing context support, incorrect IAM patterns, missing tests).
 - Suggest specific code improvements.
-- If the code looks good and follows all guidelines, state that clearly.
+- Verify if previous feedback has been addressed.
+- You CANNOT approve the PR. If the code looks good and follows all guidelines (or if the user has successfully applied requested changes), simply acknowledge that this follows the best practices and state that a maintainer will do the final review before approval.
 - Format your output in Markdown so it can be posted directly as a GitHub PR comment.
 - Please be mindful of module sources in README examples, where we purposefully use './fabric/modules/' as a base path for our test harness
 - CRITICAL: Keep your entire response concise. The GitHub PR comment size limit is 65536 characters. Your response MUST be well under this limit (e.g., maximum 50000 characters). Focus only on the most important feedback.
 """
 
-  model = GenerativeModel(
-      model_name=args.model,
-      system_instruction=system_instruction,
-  )
-
   prompt = ""
   if history_content:
-    prompt += f"Here is the history of this PR (commits and previous reviews):\n{history_content}\n\n"
+      prompt += f"### PR History\nHere is the history of this PR (previous reviews and changes applied). Use this to check if previous feedback was addressed:\n{history_content}\n\n"
   
-  prompt += f"Here is the current cumulative PR diff to review:\n```diff\n{diff_content}\n```"
-
+  prompt += f"### Current Cumulative Diff\nHere is the current cumulative PR diff to review against the guidelines:\n```diff\n{diff_content}\n```\n\n"
+  
+  prompt += "Please provide your review following the system instructions, focusing on the current cumulative diff while taking the history into account."
+  
+  # Print prompt to stderr for debugging in workflow logs
+  print(f"=== PROMPT SENT TO GEMINI ===\n{prompt}\n=============================", file=sys.stderr)
+  
   try:
     # Using a low temperature for a more analytical/deterministic review
-    response = model.generate_content(prompt,
-                                      generation_config={"temperature": 0.2})
+    response = client.models.generate_content(
+        model=args.model,
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=system_instruction,
+            temperature=0.2,
+        ),
+    )
     print(response.text)
   except Exception as e:
     print(f"Error calling Vertex AI: {e}", file=sys.stderr)
