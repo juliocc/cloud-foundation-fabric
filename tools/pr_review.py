@@ -15,8 +15,143 @@
 
 import argparse
 import datetime
+import json
 import os
+import re
+import subprocess
 import sys
+
+
+def get_history(comments_file, base_sha, head_sha):
+  events = []
+
+  # Load comments
+  try:
+    with open(comments_file, "r") as f:
+      comments = json.load(f)
+      bot_comment_count = 0
+      for c in comments:
+        body = c.get("body", "")
+        user = c.get("user", {}) or {}
+        user_login = user.get("login", "")
+        if user_login == "github-actions[bot]":
+          bot_comment_count += 1
+          # Extract reviewed commit SHA if present
+          reviewed_sha = None
+          match = re.search(r"\*\(Reviewed commit: ([a-f0-9]+)\)\*", body)
+          if match:
+            reviewed_sha = match.group(1)
+
+          events.append(
+              {
+                  "type": "comment",
+                  "date": c.get("created_at"),
+                  "body": body,
+                  "reviewed_sha": reviewed_sha,
+              }
+          )
+          if bot_comment_count >= 5:
+            break
+  except Exception as e:
+    print(f"Warning: Error reading comments file: {e}", file=sys.stderr)
+
+  # Get commits
+  try:
+    result = subprocess.run(
+        [
+            "git",
+            "log",
+            "--reverse",
+            "--format=%H|%cI|%s",
+            f"{base_sha}..{head_sha}",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    for line in result.stdout.splitlines():
+      if not line.strip():
+        continue
+      parts = line.split("|", 2)
+      if len(parts) >= 2:
+        events.append(
+            {
+                "type": "commit",
+                "date": parts[1],
+                "sha": parts[0],
+                "subject": parts[2] if len(parts) > 2 else "",
+            }
+        )
+  except subprocess.CalledProcessError as e:
+    print(f"Warning: Error getting git log: {e}", file=sys.stderr)
+
+  # Sort events by date
+  events.sort(key=lambda x: x["date"])
+
+  # Associate reviews with commits
+  reviews = []
+  last_commit_sha = base_sha
+  for event in events:
+    if event["type"] == "commit":
+      last_commit_sha = event["sha"]
+    elif event["type"] == "comment":
+      # Use parsed SHA if available, otherwise fallback to timestamp-based guess
+      reviewed_sha = event.get("reviewed_sha") or last_commit_sha
+      reviews.append(
+          {
+              "date": event["date"],
+              "body": event["body"],
+              "reviewed_sha": reviewed_sha,
+          }
+      )
+
+  # Build history string
+  history = []
+  for i in range(len(reviews)):
+    rev = reviews[i]
+    history.append(f"\n--- Previous Automated Review ({rev['date']}) ---")
+    history.append(rev["body"])
+
+    # Generate diff to next review or to head
+    if i < len(reviews) - 1:
+      next_rev = reviews[i + 1]
+      if rev["reviewed_sha"] != next_rev["reviewed_sha"]:
+        history.append(
+            f"\n--- Changes applied after this review ({rev['reviewed_sha'][:7]} -> {next_rev['reviewed_sha'][:7]}) ---"
+        )
+        try:
+          diff_result = subprocess.run(
+              [
+                  "git",
+                  "diff",
+                  f"{rev['reviewed_sha']}..{next_rev['reviewed_sha']}",
+              ],
+              capture_output=True,
+              text=True,
+              check=True,
+          )
+          history.append(f"```diff\n{diff_result.stdout}\n```")
+        except subprocess.CalledProcessError:
+          history.append("*(No diff available, history likely rewritten)*")
+    else:
+      # Last review. Diff to current head
+      if rev["reviewed_sha"] != head_sha:
+        history.append(
+            f"\n--- Changes applied since last review ({rev['reviewed_sha'][:7]} -> {head_sha[:7]}) ---"
+        )
+        try:
+          diff_result = subprocess.run(
+              ["git", "diff", f"{rev['reviewed_sha']}..{head_sha}"],
+              capture_output=True,
+              text=True,
+              check=True,
+          )
+          history.append(f"```diff\n{diff_result.stdout}\n```")
+        except subprocess.CalledProcessError:
+          history.append("*(No diff available, history likely rewritten)*")
+
+  return "\n".join(history)
+
 
 try:
   import vertexai
@@ -37,6 +172,9 @@ def main():
                       help="Gemini model name")
   parser.add_argument("--diff-file", required=True,
                       help="Path to the PR diff file")
+  parser.add_argument("--comments-file", help="Path to the PR comments JSON file")
+  parser.add_argument("--base-sha", help="Base SHA of the PR")
+  parser.add_argument("--head-sha", help="Head SHA of the PR")
   args = parser.parse_args()
 
   # Read local repository guidelines
@@ -63,6 +201,11 @@ def main():
   if not diff_content.strip():
     print("No diff content found. Skipping review.")
     return
+
+  # Load history if requested
+  history_content = ""
+  if args.comments_file and args.base_sha and args.head_sha:
+    history_content = get_history(args.comments_file, args.base_sha, args.head_sha)
 
   # Initialize Vertex AI
   try:
@@ -95,7 +238,11 @@ Review the provided git diff. Provide a concise, constructive review.
       system_instruction=system_instruction,
   )
 
-  prompt = f"Here is the PR diff to review:\n```diff\n{diff_content}\n```"
+  prompt = ""
+  if history_content:
+    prompt += f"Here is the history of this PR (commits and previous reviews):\n{history_content}\n\n"
+  
+  prompt += f"Here is the current cumulative PR diff to review:\n```diff\n{diff_content}\n```"
 
   try:
     # Using a low temperature for a more analytical/deterministic review
